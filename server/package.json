@@ -1,0 +1,31 @@
+{
+  "name": "sprintboard-server",
+  "version": "1.0.0",
+  "description": "SprintBoard API: Express + PostgreSQL",
+  "main": "src/index.js",
+  "private": true,
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "setup": "node src/db/setup.js",
+    "seed": "node src/db/seed.js",
+    "reset": "node src/db/reset.js",
+    "test": "jest --runInBand"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "connect-pg-simple": "^10.0.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^17.11.0-beta.19",
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  },
+  "allowScripts": {
+    "@embedded-postgres/linux-x64@17.11.0-beta.19": true
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "sprintboard",
+  "version": "1.0.0",
+  "description": "SprintBoard - a project management and issue tracking app (React + Express + PostgreSQL)",
+  "private": true,
+  "scripts": {
+    "postgres": "node server/scripts/postgres.js keep",
+    "dev": "concurrently -n postgres,server,client -c blue,green,magenta \"npm run postgres\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "db:setup": "node server/scripts/postgres.js ensure && npm run setup --prefix server",
+    "db:seed": "npm run seed --prefix server",
+    "db:reset": "node server/scripts/postgres.js ensure && npm run reset --prefix server",
+    "test": "node server/scripts/postgres.js ensure && npm test --prefix server",
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Environment secrets
+.env
+.env.local
+.env.production
+
+# Embedded PostgreSQL data directory
+server/.pgdata/
+server/.pg-logs/
+
+# Build output
+client/dist/
+server/coverage/
+
+# OS / editor noise
+.DS_Store
+*.log
