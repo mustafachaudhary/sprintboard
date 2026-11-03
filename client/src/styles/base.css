@@ -1,0 +1,248 @@
+/* ============================================================
+   SprintBoard — base styles
+   Theme tokens, reset, typography, shared utilities.
+
+   A true-black dark theme: one ground (#000), surfaces one
+   lightness step up (#111), nested panels another (#1c1c1f).
+   Separation comes from lightness — not borders, not shadows.
+
+   The teal accent is the one data hue; the primary button is
+   a white pill. Inter 400/500/600, tabular figures.
+   ============================================================ */
+
+:root {
+  /* Elevation by lightness alone */
+  --bg: #000000;            /* ground: page, sidebar, top bar */
+  --surface: #111113;       /* cards, panels, columns, drawer */
+  --surface-2: #1c1c1f;     /* nested: task cards, inputs, tray innards */
+  --surface-3: #262629;     /* hover / raised */
+  --raised: #2a2a2e;        /* menus, popovers */
+
+  /* Structural rules — the only 1px lines allowed */
+  --rule: #1a1a1a;          /* on the ground: shell, table rows */
+  --rule-card: #202023;     /* inside a surface: KPI dividers, row rules */
+
+  /* Text — two greys 32 levels apart, both above 4.5:1 */
+  --text: #f2f2f2;
+  --text-secondary: #b4b4b4;
+  --text-muted: #949494;
+
+  /* The one data hue — never on buttons, tabs or nav */
+  --accent: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.13);
+  --accent-ring: rgba(45, 212, 191, 0.45);
+
+  /* The primary control: made primary by inversion */
+  --primary: #f2f2f2;
+  --ink-on-primary: #0a0a0a;
+
+  /* Semantic colours — hue on a dark tint of itself */
+  --positive: #3fc07a;
+  --positive-bg: #14231a;
+  --negative: #e5566f;
+  --negative-bg: #271619;
+  --warning-ink: #e0a23c;
+  --warning-bg: #261e11;
+
+  /* Status colours (badges, board semantics) */
+  --status-todo: #949494;
+  --status-progress: var(--accent);
+  --status-review: #b4b4b4;
+  --status-done: var(--positive);
+
+  /* Priority — grey for what is fine, colour only at risk */
+  --priority-low: #949494;
+  --priority-medium: #949494;
+  --priority-high: #e0a23c;
+  --priority-urgent: #e5566f;
+
+  /* Scrim for overlays (dimming, not elevation) */
+  --scrim: rgba(0, 0, 0, 0.76);
+  --scrim-soft: rgba(0, 0, 0, 0.7);
+
+  /* Shape — soft system: cards 16, nested 12, controls 10,
+     buttons and chips full pills */
+  --radius: 10px;
+  --radius-nested: 12px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* Motion — quick and restrained */
+  --transition: 140ms ease;
+
+  /* Shell layout */
+  --sidebar-width: 232px;
+  --topbar-height: 64px;
+
+  /* Type — one grotesk, three weights, nothing above 600 */
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /* One-off inks */
+  --selection: rgba(45, 212, 191, 0.26);
+  --scrollbar-thumb: #2a2a2e;
+  --primary-hover: #e9faf7;
+  --negative-hover: rgba(229, 86, 111, 0.24);
+}
+
+/* ---- Reset ------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+ul, ol {
+  list-style: none;
+  padding: 0;
+}
+
+/* Numbers align digit for digit wherever they update or line up */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Keyboard focus: visible ring on interactive elements */
+:focus-visible {
+  outline: 2px solid var(--accent-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--selection);
+}
+
+/* Scrollbars (WebKit + Firefox) — slim and dark */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Every animation has a reduced-motion fallback: content stays,
+   movement goes. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---- Shared utilities ------------------------------------- */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.page {
+  padding: 28px 32px 56px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.page__title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.page__subtitle {
+  color: var(--text-secondary);
+  margin-top: 4px;
+  font-size: 13.5px;
+}
+
+.page__actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 20px 16px 44px;
+  }
+}

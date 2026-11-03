@@ -1,0 +1,1223 @@
+/* ============================================================
+   SprintBoard — layout & pages
+   Sidebar and top-bar shell, auth pages, dashboard overview, projects,
+   Kanban board, task table.
+
+   The shell shares one true-black ground divided by 1px rules.
+   The active nav item is marked only by its label going from
+   grey to white — no fill, no accent. Every screen owns exactly
+   one primary action, and it is a white pill.
+   ============================================================ */
+
+/* ==== App shell ============================================ */
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ---- Sidebar: wordmark + nav on the shared ground ---- */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg);
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 40;
+  transition: transform 200ms ease;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  height: var(--topbar-height);
+  border-bottom: 1px solid var(--rule);
+}
+.sidebar__logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+.sidebar__name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sidebar__section {
+  padding: 20px 16px 8px;
+}
+.sidebar__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  font-weight: 400;
+  margin-bottom: 4px;
+  transition: color var(--transition);
+}
+.nav-item:hover {
+  color: var(--text);
+}
+/* Active: the label brightens. No fill, no accent — no fill, no accent. */
+.nav-item--active {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Project list inside the sidebar — the colour square is data:
+   the same project colour shown on cards, boards and lists */
+.sidebar__project {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 13px;
+  transition: color var(--transition);
+}
+.sidebar__project:hover {
+  color: var(--text);
+}
+.sidebar__project--active {
+  color: var(--text);
+  font-weight: 500;
+}
+.sidebar__project-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.sidebar__project-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__spacer {
+  flex: 1;
+}
+.sidebar__meta {
+  padding: 16px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+/* ---- Topbar: object name left, account switcher right ---- */
+.main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  height: var(--topbar-height);
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  align-items: stretch;
+  padding: 0 0 0 32px;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 30;
+}
+.topbar__crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.topbar__title {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.topbar__root {
+  color: var(--text-muted);
+}
+
+/* The workspace switcher sits at the top bar's right end behind
+   a full-height divider — the bar carries something real. */
+.topbar__switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  border-left: 1px solid var(--rule);
+}
+.topbar__switcher-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.topbar__switcher .icon-btn {
+  width: 24px;
+  height: 24px;
+}
+
+/* Hamburger — only visible on small screens */
+.topbar__menu-btn {
+  display: none;
+  align-self: center;
+  margin-right: 12px;
+}
+
+.sidebar-backdrop {
+  display: none;
+}
+
+/* ---- Responsive shell ---- */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar--open {
+    transform: none;
+  }
+  .main {
+    margin-left: 0;
+  }
+  .topbar {
+    height: 56px;
+    padding-left: 16px;
+  }
+  .topbar__menu-btn { display: inline-flex; }
+  .topbar__switcher-name { display: none; }
+  .topbar__switcher { padding: 0 12px; }
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: var(--scrim-soft);
+    z-index: 35;
+    animation: overlay-in 150ms ease;
+  }
+}
+
+/* ==== Sections — the overview rhythm ==========================
+   Stacked in one column, 48px apart, each with an 18px title on
+   the left and a quiet action on the right. */
+.section {
+  margin-bottom: 48px;
+}
+.section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.section__title {
+  font-size: 18px;
+  font-weight: 500;
+}
+.section__meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.section__action {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section__action:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ==== Dashboard ==============================================
+   The screen's question — where does the work stand — answered
+   by the finding line, the KPI tray and the pulse chart. */
+
+/* The screen's hierarchy: pulse lead (7fr) + needs-you rail (5fr),
+   sharing a bottom edge. */
+.dash-top {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 40px;
+}
+@media (max-width: 980px) {
+  .dash-top { grid-template-columns: 1fr; }
+}
+
+/* Sprint pulse: the headline figure and its 14-day rhythm.
+   The accent is the data here — the chart columns. */
+.pulse {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.pulse__figure-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.pulse__figure {
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.pulse__unit {
+  font-size: 20px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+.pulse__caption {
+  font-size: 14px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pulse__sub {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.pulse__chart { flex: 1; }
+.pulse__chart .chart { height: 180px; }
+.pulse__empty {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 60px 0;
+  text-align: center;
+}
+.pulse__foot {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-card);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Needs-you rail: grouped rows, each one click from its board.
+   The footer action pins to the stretched card's foot. */
+.rail {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.rail__body { flex: 1; }
+.rail__group {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 8px 0 4px;
+}
+.rail__group:first-child { padding-top: 0; }
+.rail__group-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.rail__group-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.rail__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-radius: var(--radius);
+}
+.rail__bar {
+  width: 3px;
+  height: 30px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.rail__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.rail__title {
+  font-size: 13.5px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rail__sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rail__signal {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--negative);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.rail__chevron {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.rail__foot {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-card);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.rail__foot:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.rail__clear { padding: 24px 0; }
+.rail__clear-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.rail__clear-hint {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* Column chart drawn in HTML: one data hue, square tops, honest
+   zeros (an empty day draws nothing), 3 faint gridlines, the
+   y-tick lane on the right */
+.chart {
+  position: relative;
+  height: 132px;
+}
+.chart__grid {
+  position: absolute;
+  inset: 0 56px 0 0;
+}
+.chart__grid span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--rule-card);
+}
+.chart__grid b {
+  position: absolute;
+  right: -48px;
+  transform: translateY(-50%);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.chart__bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+.chart__bars i {
+  flex: 1;
+  background: var(--accent);
+  min-height: 0;
+}
+.chart__labels {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -24px;
+  display: flex;
+  justify-content: space-between;
+}
+.chart__labels span {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Recent activity rows — 49px pitch, rules bleeding past the text */
+.activity-list { margin: 0 -8px; }
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--rule);
+  border-radius: 0;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item__color {
+  width: 3px;
+  height: 28px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.activity-item__main { flex: 1; min-width: 0; }
+.activity-item__title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.activity-item__sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.activity-item__sub .activity-item__overdue {
+  color: var(--negative);
+  font-weight: 500;
+}
+.activity-item__date {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Per-project rows */
+.project-list { margin: 0 -8px; }
+.project-list__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.project-list__row:last-child { border-bottom: none; }
+.project-list__row-main {
+  flex: 1;
+  min-width: 0;
+}
+.project-list__name {
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.project-list__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.project-list__desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.project-list__bar {
+  width: 120px;
+  flex-shrink: 0;
+}
+.project-list__count {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  width: 56px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 640px) {
+  .project-list__bar { display: none; }
+}
+
+/* ==== Projects page — table listing ===================
+   A bare table on the ground: grey header labels, one rule per row,
+   the identity column widest, figures right-aligned in tabular
+   digits. No cards, no grid — the rows are the objects. */
+.projects-table__head,
+.projects-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 200px 96px 40px;
+  gap: 20px;
+  align-items: center;
+  padding: 12px 8px;
+}
+.projects-table__head {
+  padding: 24px 8px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.projects-table__head .right {
+  text-align: right;
+}
+.projects-row {
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.projects-row:hover {
+  background: var(--surface);
+}
+.projects-row:focus-visible {
+  outline-offset: -2px;
+}
+.projects-row__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.projects-row__color {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.projects-row__name-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.projects-row__name {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.projects-row__desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+.projects-row__count {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.projects-row__progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.projects-row__progress .progress {
+  flex: 1;
+}
+.projects-row__percent {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.projects-row__created {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.projects-row__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+@media (max-width: 760px) {
+  .projects-table__head { display: none; }
+  .projects-row {
+    display: block;
+    padding: 16px 4px;
+  }
+  .projects-row__count,
+  .projects-row__created { display: none; }
+  .projects-row__progress { margin-top: 8px; max-width: 280px; }
+}
+
+/* ==== Kanban board ============================================= */
+.board-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.board-toolbar .input {
+  width: 240px;
+  height: 36px;
+}
+.board-toolbar__count {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1100px) {
+  .board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .board { grid-template-columns: 1fr; }
+}
+
+/* Columns are cards one lightness step up; a drop target steps
+   up again — drag feedback by lightness, never by accent. */
+.column {
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  padding: 12px;
+  min-height: 200px;
+  transition: background var(--transition);
+}
+.column--drag-over {
+  background: var(--surface-2);
+}
+.column__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 12px;
+}
+.column__title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.column__count {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.column__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 48px;
+}
+.column__empty {
+  border: 1px dashed var(--raised);
+  border-radius: var(--radius-nested);
+  color: var(--text-muted);
+  font-size: 12.5px;
+  text-align: center;
+  padding: 24px 12px;
+}
+
+/* Task cards: nested one lightness step up from the column */
+.task-card {
+  background: var(--surface-2);
+  border-radius: var(--radius-nested);
+  padding: 12px 16px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left; /* cards are <button>s — keep content left-aligned */
+  transition: background var(--transition), opacity var(--transition);
+}
+.task-card:hover {
+  background: var(--surface-3);
+}
+.task-card--dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+.task-card__title {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.task-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.task-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.task-card__footer .spacer { flex: 1; }
+.task-card__comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==== Task table ================================================
+   The full list sits on the ground with no card around it:
+   underline tabs, a filter bar, then rules and alignment. */
+.tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  position: relative;
+  padding: 12px 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color var(--transition);
+}
+.tab:hover { color: var(--text-secondary); }
+.tab--active { color: var(--text); }
+/* The indicator is ink, as wide as the label — never the accent */
+.tab--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--text);
+}
+.tab__count {
+  margin-left: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 16px 0 8px;
+}
+.toolbar .input { width: 288px; height: 36px; }
+.toolbar .select { height: 36px; width: 140px; }
+
+.chip-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
+}
+.chip-toggle:hover { background: var(--surface-3); color: var(--text); }
+.chip-toggle--active {
+  background: var(--negative-bg);
+  color: var(--negative);
+}
+
+.task-table__head,
+.task-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px 110px 120px 96px 24px;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 8px;
+}
+.task-table__head {
+  padding: 20px 8px 8px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.task-table__head .right {
+  text-align: right;
+}
+.task-row {
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background var(--transition);
+}
+.task-row:hover {
+  background: var(--surface);
+}
+.task-row:last-child { border-bottom: none; }
+.task-row__title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.task-row__project {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.task-row__project-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.task-row__side {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+.task-row__deadline {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.task-row__deadline--overdue {
+  color: var(--negative);
+  font-weight: 500;
+}
+.task-row__chevron {
+  color: var(--text-muted);
+  display: flex;
+  justify-content: flex-end;
+}
+.task-row--empty {
+  display: block;
+  border-bottom: none;
+  cursor: default;
+}
+@media (max-width: 760px) {
+  .task-table__head { display: none; }
+  .task-table__head + .task-row { border-top: none; }
+  .task-row,
+  .task-row:hover {
+    display: block;
+    background: none;
+    padding: 12px 4px;
+  }
+  .task-row__side {
+    margin-top: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .task-row__deadline { text-align: left; }
+  .task-row__chevron { display: none; }
+}
+
+/* ==== Task detail drawer =========================================
+   One lightness step up from the ground, full height, no border
+   and no shadow — the scrim does the separating. */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim-soft);
+  z-index: 90;
+  animation: overlay-in 150ms ease;
+}
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(480px, 94vw);
+  background: var(--surface);
+  z-index: 95;
+  display: flex;
+  flex-direction: column;
+  animation: drawer-in 200ms cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+@keyframes drawer-in {
+  from { transform: translateX(32px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.drawer__header {
+  padding: 20px 24px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.drawer__title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.drawer__project {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.drawer__footer {
+  border-top: 1px solid var(--rule-card);
+  padding: 16px 24px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.detail-section__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.detail-section__text {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Comments */
+.comment {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-card);
+}
+.comment:last-child { border-bottom: none; }
+.comment__bubble { min-width: 0; flex: 1; }
+.comment__meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.comment__author { font-size: 13px; font-weight: 500; }
+.comment__time { font-size: 11.5px; color: var(--text-muted); }
+.comment__content {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.comment-composer {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 12px;
+}
+.comment-composer .textarea { min-height: 64px; }
+
+/* ==== Auth pages ============================================
+   Both panels on the shared ground, divided by one rule. The
+   product's mark drawn large; links are ink, never accent. */
+.auth {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.auth__aside {
+  background: var(--bg);
+  border-right: 1px solid var(--rule);
+  padding: 40px 64px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 40px;
+  overflow: hidden;
+}
+
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.auth__brand .sidebar__logo { width: 32px; height: 32px; }
+.auth__brand-name { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+
+/* The product's own mark, drawn large: three columns of work */
+.auth__motif {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  height: 150px;
+  margin-top: 8px;
+}
+.auth__motif span {
+  width: 28px;
+  border-radius: 14px;
+}
+
+.auth__pitch {
+  max-width: 420px;
+}
+.auth__pitch-title {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.auth__pitch-text {
+  color: var(--text-secondary);
+  font-size: 14.5px;
+  line-height: 1.65;
+}
+.auth__points {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.auth__point {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--text-secondary);
+  font-size: 13.5px;
+}
+.auth__point svg { color: var(--text-muted); flex-shrink: 0; margin-top: 2px; }
+
+.auth__foot {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.auth__form-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+.auth__form {
+  width: 100%;
+  max-width: 380px;
+}
+.auth__form-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.auth__form-sub {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  margin-bottom: 28px;
+}
+.auth__form-sub a,
+.auth__switch a {
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--text-muted);
+}
+.auth__form-sub a:hover,
+.auth__switch a:hover {
+  text-decoration-color: var(--text);
+}
+.auth__switch {
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+.auth__submit {
+  width: 100%;
+  height: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.demo-hint {
+  margin-top: 24px;
+  background: var(--surface);
+  border-radius: var(--radius-nested);
+  padding: 12px 16px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.demo-hint svg { flex-shrink: 0; margin-top: 2px; color: var(--text-muted); }
+.demo-hint button {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 12.5px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--text-muted);
+}
+.demo-hint button:hover { text-decoration-color: var(--text); }
+
+@media (max-width: 860px) {
+  .auth { grid-template-columns: 1fr; }
+  .auth__aside { display: none; }
+}
