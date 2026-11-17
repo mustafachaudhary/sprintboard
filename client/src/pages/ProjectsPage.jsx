@@ -11,7 +11,7 @@ import { formatDate } from '../utils/format';
 
 /**
  * Projects — a full-width table listing, like All Tasks:
- * a bare table on the ground (no cards around it), grey header labels,
+ * grey header labels, one rule per row,
  * row rules, the identity column widest, right-aligned tabular figures.
  *
  * Each row: the project's colour mark and name (identity), its description,

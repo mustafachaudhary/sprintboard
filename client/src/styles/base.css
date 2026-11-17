@@ -4,10 +4,13 @@
 
    A true-black dark theme: one ground (#000), surfaces one
    lightness step up (#111), nested panels another (#1c1c1f).
-   Separation comes from lightness — not borders, not shadows.
+   Separation comes from lightness — not borders, not shadows —
+   except the structural 1px rules of the shell and tables.
 
-   The teal accent is the one data hue; the primary button is
-   a white pill. Inter 400/500/600, tabular figures.
+   The teal accent is the one data hue. It appears on data
+   (chart columns, progress fills, in-progress marks) and focus
+   rings. The primary button is a white pill; the accent never
+   touches buttons, tabs or navigation.
    ============================================================ */
 
 :root {

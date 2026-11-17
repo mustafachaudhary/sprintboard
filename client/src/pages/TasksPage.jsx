@@ -10,7 +10,7 @@ import { PriorityBadge, StatusBadge } from '../components/Badges';
 import { PRIORITY_LABELS, STATUS_LABELS, STATUS_ORDER, describeDeadline } from '../utils/format';
 
 /**
- * All Tasks — the full list, the full list:
+ * All Tasks — the full list:
  *
  *   title row (title left, the one primary right)
  *   underline tabs for the list's states on a full-width 1px rule

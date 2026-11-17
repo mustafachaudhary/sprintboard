@@ -1,6 +1,6 @@
 /* ============================================================
    SprintBoard — layout & pages
-   Sidebar and top-bar shell, auth pages, dashboard overview, projects,
+   Sidebar + top-bar shell, auth pages, dashboard overview, projects,
    Kanban board, task table.
 
    The shell shares one true-black ground divided by 1px rules.
@@ -77,7 +77,7 @@
 .nav-item:hover {
   color: var(--text);
 }
-/* Active: the label brightens. No fill, no accent — no fill, no accent. */
+/* Active: the label brightens — no fill, no accent. */
 .nav-item--active {
   color: var(--text);
   font-weight: 500;
